@@ -33,19 +33,28 @@ public:
     }
 
     pragma(inline, true) float opIndex(size_t i) { return e[i]; }
-    pragma(inline, true) float* opIndex(size_t i) { return &e[i]; }
+    // pragma(inline, true) float* opIndex(size_t i) { return &e[i]; }
 
-    pragma(inline, true) Vector3 opBinary(string op)(const Vector3* rhs)
+    pragma(inline, true) size_t length() { return e.length; }
+
+    pragma(inline, true) Vector3 opBinary(string op)(const Vector3 rhs)
     { 
-        return mixin("Vector3(e[0] "~op~" rhs.e[0],"
+        mixin("return Vector3(e[0] "~op~" rhs.e[0],"
                             ~"e[1] "~op~" rhs.e[1],"
                             ~"e[2] "~op~" rhs.e[2]);");
     }
 
-    pragma(inline, true) Vector3 opBinary(string op)(const float scalar)
+    pragma(inline, true) Vector3 opBinary(string op)(float scalar)
     {
-        return mixin("Vector3(e[0] "~op~" scalar,"
-                            ~"e[1] "~op~" scalar,"
+        mixin("return Vector3(e[0] "~op~" scalar, "
+                            ~"e[1] "~op~" scalar, "
+                            ~"e[2] "~op~" scalar);");
+    }
+    
+    pragma(inline, true) Vector3 opBinaryRight(string op)(float scalar)
+    {
+        mixin("return Vector3(e[0] "~op~" scalar, "
+                            ~"e[1] "~op~" scalar, "
                             ~"e[2] "~op~" scalar);");
     }
 
@@ -81,9 +90,9 @@ public:
         float k = 1.0 / sqrt(e[0]*e[0] + e[1]*e[1] + e[2]*e[2]);
         e[0] *= k; e[1] *= k; e[2] *= k;
     }
+}
 
-    pragma(inline, true) Vector3 unitVector()
-    {
-        return Vector3(e[0] / e.length, e[1] / e.length, e[2] / e.length);
-    }
+pragma(inline, true) Vector3 unitVector(Vector3 vec)
+{
+    return Vector3(vec[0] / vec.length, vec[1] / vec.length, vec[2] / vec.length);
 }
