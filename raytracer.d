@@ -5,8 +5,20 @@ import std.file: append, remove;
 import vector;
 import ray;
 
+bool hitSphere(const Vector3 centre, float radius, const Ray r)
+{
+    Vector3 oc = r.origin - centre;
+    float a = dot(r.direction, r.direction);
+    float b = 2.0 * dot(oc, r.direction);
+    float c = dot(oc, oc) - radius * radius;
+    float discriminant = b * b - 4 * a * c;
+    return discriminant > 0;
+}
+
 Vector3 color(Ray r)
 {
+    if (hitSphere(Vector3(0., 0., -1.), 0.5, r))
+        return Vector3(1., 0., 0.);
     Vector3 unitDirection = unitVector(r.direction);
     float t = 0.5 * (unitDirection.y() + 1.0);
     return (1.0 - t) * Vector3(1.0, 1.0, 1.0) + t * Vector3(0.5, 0.7, 1.0);

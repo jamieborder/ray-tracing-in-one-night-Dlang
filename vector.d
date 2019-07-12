@@ -72,18 +72,6 @@ public:
              ~"e[1] "~op~"= scalar;"
              ~"e[2] "~op~"= scalar;");
     }
-    
-    pragma(inline, true) float dot(const Vector3* rhs)
-    {
-        return e[0] * rhs.e[0] + e[1] * rhs.e[1] + e[2] * rhs.e[2];
-    }
-
-    pragma(inline, true) Vector3 cross(const Vector3* rhs)
-    {
-        return Vector3(e[1] * rhs.e[2] - e[2] * rhs.e[1],
-                       e[2] * rhs.e[0] - e[0] * rhs.e[2],
-                       e[0] * rhs.e[1] - e[1] * rhs.e[0]);
-    }
 
     pragma(inline, true) void makeUnitVector()
     {
@@ -92,7 +80,19 @@ public:
     }
 }
 
-pragma(inline, true) Vector3 unitVector(Vector3 vec)
+pragma(inline, true) float dot(const Vector3 v1, const Vector3 v2)
 {
-    return Vector3(vec[0] / vec.length, vec[1] / vec.length, vec[2] / vec.length);
+    return v1.e[0] * v2.e[0] + v1.e[1] * v2.e[1] + v1.e[2] * v2.e[2];
+}
+
+pragma(inline, true) Vector3 cross(const Vector3 v1, const Vector3 v2)
+{
+    return Vector3(v1.e[1] * v2.e[2] - v1.e[2] * v2.e[1],
+                   v1.e[2] * v2.e[0] - v1.e[0] * v2.e[2],
+                   v1.e[0] * v2.e[1] - v1.e[1] * v2.e[0]);
+}
+
+pragma(inline, true) Vector3 unitVector(Vector3 v1)
+{
+    return Vector3(v1[0] / v1.length, v1[1] / v1.length, v1[2] / v1.length);
 }
