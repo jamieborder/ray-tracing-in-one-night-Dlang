@@ -37,21 +37,21 @@ public:
 
     pragma(inline, true) size_t length() { return e.length; }
 
-    pragma(inline, true) Vector3 opBinary(string op)(const Vector3 rhs)
+    pragma(inline, true) Vector3 opBinary(string op)(const Vector3 rhs) const
     { 
         mixin("return Vector3(e[0] "~op~" rhs.e[0],"
                             ~"e[1] "~op~" rhs.e[1],"
                             ~"e[2] "~op~" rhs.e[2]);");
     }
 
-    pragma(inline, true) Vector3 opBinary(string op)(float scalar)
+    pragma(inline, true) Vector3 opBinary(string op)(const float scalar) const
     {
         mixin("return Vector3(e[0] "~op~" scalar, "
                             ~"e[1] "~op~" scalar, "
                             ~"e[2] "~op~" scalar);");
     }
     
-    pragma(inline, true) Vector3 opBinaryRight(string op)(float scalar)
+    pragma(inline, true) Vector3 opBinaryRight(string op)(const float scalar) const
     {
         mixin("return Vector3(e[0] "~op~" scalar, "
                             ~"e[1] "~op~" scalar, "

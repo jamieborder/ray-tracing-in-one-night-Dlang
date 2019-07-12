@@ -16,5 +16,5 @@ public:
 
     Vector3 origin() const { return A; }
     Vector3 direction() const { return B; }
-    Vector3 pointAtParameter(float t) { return A + t * B; }
+    Vector3 pointAtParameter(float t) const { return A + t * B; }
 }
