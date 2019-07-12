@@ -9,13 +9,25 @@ import hitable;
 import sphere;
 import camera;
 
+auto rnd = Random(13);
+
+Vector3 randomInUnitSphere()
+{
+    Vector3 p;
+    do {
+        p = 2.0 * Vector3(uniform01(rnd),
+                          uniform01(rnd),
+                          uniform01(rnd)) - Vector3(1., 1., 1.);
+    } while (p.squaredLength >= 1.0);
+    return p;
+}
+
 Vector3 color(Ray r, Hitable world)
 {
     HitRecord rec;
-    if (world.hit(r, 0.0, float.max, rec)) {
-        return 0.5 * Vector3(rec.normal.x+1,
-                             rec.normal.y+1,
-                             rec.normal.z+1);
+    if (world.hit(r, 0.001, float.max, rec)) {
+        Vector3 target = rec.p + rec.normal + randomInUnitSphere;
+        return 0.5 * color(new Ray(rec.p, target - rec.p), world);
     }
     else {
         Vector3 unitDirection = unitVector(r.direction);
@@ -26,9 +38,7 @@ Vector3 color(Ray r, Hitable world)
 
 void main()
 {
-    auto rnd = Random(13);
-
-    string outputFile = "./dataNoAliasing.ppm";
+    string outputFile = "./data.ppm";
     try {
         remove(outputFile);
     }
@@ -60,10 +70,10 @@ void main()
         for (int i = 0; i <nx; i++) {
             Vector3 col = Vector3(0., 0., 0.);
             for (int s = 0; s < ns; s++) {
-                // float u = float(i + uniform01(rnd)) / float(nx);
-                // float v = float(j + uniform01(rnd)) / float(ny);
-                float u = float(i) / float(nx);
-                float v = float(j) / float(ny);
+                float u = float(i + uniform01(rnd)) / float(nx);
+                float v = float(j + uniform01(rnd)) / float(ny);
+                // float u = float(i) / float(nx);
+                // float v = float(j) / float(ny);
                 r = camera.getRay(u, v);
                 col += color(r, world);
             }

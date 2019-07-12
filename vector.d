@@ -78,6 +78,11 @@ public:
         float k = 1.0 / sqrt(e[0]*e[0] + e[1]*e[1] + e[2]*e[2]);
         e[0] *= k; e[1] *= k; e[2] *= k;
     }
+
+    pragma(inline, true) float squaredLength() const
+    {
+        return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
+    }
 }
 
 pragma(inline, true) float dot(const Vector3 v1, const Vector3 v2)
