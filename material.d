@@ -26,7 +26,7 @@ abstract class Material
 {
 public:
     abstract bool scatter(const Ray rIn, const HitRecord rec, 
-                          Vector3 attenuation, out Ray scattered) const;
+                          ref Vector3 attenuation, out Ray scattered) const;
 }
 
 class Lambertian : Material
@@ -39,7 +39,7 @@ public:
     }
 
     override bool scatter(const Ray rIn, const HitRecord rec, 
-                          Vector3 attenuation, out Ray scattered) const
+                          ref Vector3 attenuation, out Ray scattered) const
     {
         Vector3 target = rec.p + rec.normal + randomInUnitSphere;
         scattered = new Ray(rec.p, target - rec.p);
@@ -61,7 +61,7 @@ public:
     }
 
     override bool scatter(const Ray rIn, const HitRecord rec, 
-                          Vector3 attenuation, out Ray scattered) const
+                          ref Vector3 attenuation, out Ray scattered) const
     {
         Vector3 reflected = reflect(unitVector(rIn.direction), rec.normal);
         scattered = new Ray(rec.p, reflected + fuzz * randomInUnitSphere);

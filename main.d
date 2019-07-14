@@ -19,7 +19,6 @@ Vector3 color(Ray r, Hitable world, int depth)
         Ray scattered;
         Vector3 attenuation;
         if (depth < 1 && rec.mat.scatter(r, rec, attenuation, scattered)) {
-            writeln("depth = ", depth);
             return attenuation * color(scattered, world, depth + 1);
         }
         else {
