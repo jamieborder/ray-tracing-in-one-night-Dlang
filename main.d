@@ -8,26 +8,23 @@ import ray;
 import hitable;
 import sphere;
 import camera;
+import material;
 
 auto rnd = Random(13);
 
-Vector3 randomInUnitSphere()
-{
-    Vector3 p;
-    do {
-        p = 2.0 * Vector3(uniform01(rnd),
-                          uniform01(rnd),
-                          uniform01(rnd)) - Vector3(1., 1., 1.);
-    } while (p.squaredLength >= 1.0);
-    return p;
-}
-
-Vector3 color(Ray r, Hitable world)
+Vector3 color(Ray r, Hitable world, int depth)
 {
     HitRecord rec;
     if (world.hit(r, 0.001, float.max, rec)) {
-        Vector3 target = rec.p + rec.normal + randomInUnitSphere;
-        return 0.5 * color(new Ray(rec.p, target - rec.p), world);
+        Ray scattered;
+        Vector3 attenuation;
+        if (depth < 1 && rec.mat.scatter(r, rec, attenuation, scattered)) {
+            writeln("depth = ", depth);
+            return attenuation * color(scattered, world, depth + 1);
+        }
+        else {
+            return Vector3(0., 0., 0.);
+        }
     }
     else {
         Vector3 unitDirection = unitVector(r.direction);
@@ -56,14 +53,18 @@ void main()
     Vector3 vertical = Vector3(0.0, 2.0, 0.0);
     Vector3 origin = Vector3(0.0, 0.0, 0.0);
 
-    Hitable[2] list;
-    list[0] = new Sphere(Vector3(0., 0., -1.), 0.5);
-    list[1] = new Sphere(Vector3(0., -100.5, -1.), 100.);
+    Hitable[4] list;
+    list[0] = new Sphere(Vector3(0., 0., -1.), 0.5,
+                                 new Lambertian(Vector3(0.8, 0.3, 0.4)));
+    list[1] = new Sphere(Vector3(0., -100.5, -1.), 100.,
+                                 new Lambertian(Vector3(0.8, 0.8, 0.0)));
+    list[2] = new Sphere(Vector3(1., 0., -1.), 0.5,
+                                 new Metal(Vector3(0.8, 0.6, 0.2), 1.0));
+    list[3] = new Sphere(Vector3(-1., 0., -1.), 0.5,
+                                 new Metal(Vector3(0.8, 0.8, 0.9), 0.3));
 
     Hitable world = new HitableList(list);
-
     Camera camera = new Camera();
-
     Ray r;
 
     for (int j = ny-1; j >=0; j--) {
@@ -75,7 +76,7 @@ void main()
                 // float u = float(i) / float(nx);
                 // float v = float(j) / float(ny);
                 r = camera.getRay(u, v);
-                col += color(r, world);
+                col += color(r, world, 0);
             }
 
             col /= float(ns);
